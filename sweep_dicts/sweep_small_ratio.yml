@@ -1,0 +1,18 @@
+early_terminate:
+  min_iter: 1000
+  type: hyperband
+method: bayes
+metric:
+  goal: minimize
+  name: eval/loss
+parameters:
+  lr:
+    max: 0.001
+    min: 0.00001
+  keep_ratio:
+    values: [0.002]
+  fisher_n_samples:
+    values: [256, 1024, 2048, 4096]
+project:
+  fisher_finetune
+program: finetune_example.py
