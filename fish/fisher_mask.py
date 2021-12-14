@@ -182,16 +182,18 @@ class FisherMask:
 
         # go through each param and mask it
         for name, inds in self.masks.items():
-
-            if inds.numel() == 0:
-                continue
-
             # we assume that the parent module of each param is the penultimate module
             # attr in the name, and the last attr is the weight/bias
 
             module_attrs = name.split(".")[:-1]
             param_attr = name.split(".")[-1]
             orig_module = getattr_recursive(self.model, module_attrs)
+            if inds.numel() == 0:
+                # just set requires_grad to False for this param, and continue
+                getattr(orig_module, param_attr).requires_grad = False
+                continue
+            
+            # apply mask
             Mask(orig_module, inds, param_attr)
 
         logger.info(f"Masking complete!")
